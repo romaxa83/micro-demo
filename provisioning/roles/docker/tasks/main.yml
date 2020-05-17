@@ -1,5 +1,5 @@
 # установка docker и docker-compose на удаленом сервере
-# docker @see https://docs.docker.com/engine/install/ubuntu/
+# docker @see https://docs.docker.com/install/linux/docker-ce/debian
 # docker-compose @see https://docs.docker.com/compose/install/
 ---
 -   name: Update apt packages
@@ -20,7 +20,7 @@
 
 -   name: Add GPG key
     apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
+        url: https://download.docker.com/linux/debian/gpg
         state: present
 
 -   name: Verify fingerprint
@@ -30,7 +30,7 @@
 
 -   name: Set up the repository
     apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian stretch stable
         state: present
         filename: docker
         update_cache: yes
