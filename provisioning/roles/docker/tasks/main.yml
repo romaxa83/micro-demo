@@ -1,0 +1,70 @@
+# установка docker и docker-compose на удаленом сервере
+# docker @see https://docs.docker.com/engine/install/ubuntu/
+# docker-compose @see https://docs.docker.com/compose/install/
+---
+-   name: Update apt packages
+    apt:
+        update_cache: yes
+
+-   name: Install dependencies
+    apt:
+        name:
+            - apt-transport-https
+            - ca-certificates
+            - curl
+            - software-properties-common
+            - mc
+        # указывает чтоб пакеты были свежими
+        state: present
+        update_cache: yes
+
+-   name: Add GPG key
+    apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+-   name: Verify fingerprint
+    apt_key:
+        id: 0EBFCD88
+        state: present
+
+-   name: Set up the repository
+    apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+        filename: docker
+        update_cache: yes
+
+-   name: Update apt packages
+    apt:
+        update_cache: yes
+
+-   name: Install Docker
+    apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+    # проверяем чтобы докер был запущен (описано в секции handlers)
+    notify: Start docker on boot
+
+-   name: Install Docker Compose
+    get_url:
+        url: https://github.com/docker/compose/releases/download/1.25.0/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}
+        dest: /usr/local/bin/docker-compose
+        group: docker
+        mode: 'u+x,g+x'
+# добавляем в крон задачу на удаление старых образов запулиных на сервер (старшее 30 дней)
+-   name: Set periodic Docker prune
+    cron:
+        name: docker-prune
+        job: 'docker system prune -af --filter "until=$((30*24))h"'
+        minute: '0'
+        hour: '1'
+# удаляем старые пакеты и зависимости
+-   name: Remove useless package
+    apt:
+        autoclean: yes
+
+-   name: Remove useless dependencies
+    apt:
+        autoremove: yes

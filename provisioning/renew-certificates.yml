@@ -1,0 +1,9 @@
+# перегенерирует все сертификаты
+---
+-   name: Renew Certificates
+    hosts: site
+    remote_user: ubuntu
+    sudo: yes
+    tasks:
+       -    name: Renew certificates
+            shell: "certbot renew"

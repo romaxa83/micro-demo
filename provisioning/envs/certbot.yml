@@ -1,0 +1,4 @@
+certbot_email: romaxa83@ukr.net
+# хосты для которых нужно сгенерировать сертификаты
+certbot_hosts:
+    - ec2-3-120-128-1.eu-central-1.compute.amazonaws.com

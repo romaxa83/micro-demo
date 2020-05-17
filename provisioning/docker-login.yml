@@ -1,0 +1,21 @@
+# залогиниться на сервере где храняться образы докера
+---
+-   name: login into private registry
+    hosts: site
+    remote_user: ubuntu
+    # что залогинившись переключаемся на пользователя deploy
+    # если не указать become_user ,по дефолту переключиться на root
+    become: yes
+    become_user: deploy
+    vars_prompt:
+        -   name: registry
+            prompt: "Registry"
+            private: no
+        -   name: username
+            prompt: "Username"
+            private: no
+        -   name: password
+            prompt: "Password"
+    tasks:
+        -   name: Login into private registry
+            shell: "docker login -u {{ username }} -p {{ password }} {{ registry }}"

@@ -1,0 +1,30 @@
+{
+    "name": "slim/auction",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rodomanov Roman",
+            "email": "romaxa83@ukr.net"
+        }
+    ],
+    "config": {
+        "process-timeout": 0,
+        "sort-packages": true
+    },
+    "require": {
+        "php": "^7.4",
+        "ext-json": "^7.4",
+        "php-di/php-di": "^6.0",
+        "slim/psr7": "^1.0",
+        "slim/slim": "^4.5"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}

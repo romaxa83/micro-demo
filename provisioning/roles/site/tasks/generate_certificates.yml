@@ -1,0 +1,37 @@
+---
+-   name: Check if certificate already exists
+    # stat - инсрукция для проверки какого нибудь файла указаного в path,
+    # в даном случае проверяем наличие сертификатов
+    # результат запишет в переменую ,указаную в register (это  letsencrypt_certs)
+    stat:
+        # вместо название файла указываеться автоподстановка item из цикла запущеного из wit_items
+        # значения беруться из файла site.yml секция vars/cerbot_hosts
+        path: /etc/letsencrypt/live/{{ item }}/cert.perm
+    register: letsencrypt_certs
+    # конструкция для цикла перебтрает данные из файла site.yml секция vars/certbot_hosts (находиться envs/certbot)
+    with_items: "{{ certbot_hosts }}"
+# проверяем не занят ли 80 порт (делаеться если у нас еще не установлен свой сервер)
+-   name: Check if server is running
+    wait_for:
+        port: 80
+        timeout: 1
+    # указываеться переменая в которую сохраниться результа (wait_for)
+    register: port_check
+    # игнорируем ошибки , что не останавливать нижний код
+    ignore_errors: yes
+# на время поднимаем apache ,чтоб certbot сгенерировал сертификаты
+# (для первого запуска т.к у нас нет еще своего сервера,а certbot требует наличие сервера для генерации сертификата)
+-   name: Up certbot standalone Apache
+    shell: "docker run -d --name apache -v /var/www/html:/usr/local/apache2/htdocs/ -p 80:80 httpd:2.4"
+    # запустит команду из shell ,только если порт будет свободен (т.е. в переменой port_check будет true)
+    when: port_check.failed == true
+
+# генерируем новые сертификаты в цикле для тех хостов у которых их нет
+-   name: Generate new certificate
+    shell: "certbot certonly --noninteractive --agree-tos --email {{ certbot_email }} -d {{ item.item }}"
+    with_items: "{{ letsencrypt_certs.results }}"
+    when: not item.stat.exists
+# удаляем apache после сгенированого сертификата
+-   name: Down certbot Apache
+    shell: "docker rm -f apache"
+    when: port_check.failed == true

@@ -1,0 +1,10 @@
+# создаем пользователя для деплоя
+---
+-   name: Create deploy user
+    user:
+        name: deploy
+        # сгенерит рандомный шифрованый пароль (нам особо не нужен, вход будет через ssh)
+        password: '!'
+        groups:
+            - docker
+        state: present

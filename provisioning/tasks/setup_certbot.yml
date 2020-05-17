@@ -1,0 +1,36 @@
+# устанавливаем certbot
+# @see https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-18-04
+---
+-   name: Update apt packages
+    apt:
+        update_cache: yes
+
+-   name: Add Certbot repository
+    apt_repository:
+        repo: ppa:certbot/certbot
+        state: present
+        update_cache: yes
+
+-   name: Install Certbot
+    apt:
+        name:
+#            - letsencrypt
+            - certbot
+        state: present
+        update_cache: yes
+
+-   name: Copy Certbot configuration
+    copy:
+        src: files/cli.ini
+        dest: /etc/letsencrypt/cli.ini
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+# удаляем старые пакеты и зависимости
+-   name: Remove useless package
+    apt:
+        autoclean: yes
+
+-   name: Remove useless dependencies
+    apt:
+        autoremove: yes

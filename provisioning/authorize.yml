@@ -1,0 +1,11 @@
+# добавляет публичный ключ на сервер для пользователя deploy
+---
+-   name: Add authorized key
+    hosts: site
+    remote_user: ubuntu
+    sudo: yes
+    tasks:
+        -   name: Add user (deploy) authorized key
+            authorized_key:
+                user: deploy
+                key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
