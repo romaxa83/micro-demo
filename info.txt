@@ -35,7 +35,11 @@ docker build --pull --file api/docker/prod/nginx/Dockerfile --tag registry.cubic
                 master - ветка git, для которого создаеться контейнер (может быть develop, feature, ...)
                 1 - версия нашего сайта
         api - из какой папки собираем
-из Makefile вызываеться как REGISTRY=registry.cubic-dev.tech IMAGE_TAG=master-1 make build
+из Makefile вызываеться как
+
+docker login -u user -p password registry.cubic-dev-tech
+REGISTRY=registry.cubic-dev.tech IMAGE_TAG=master-1 make build
+REGISTRY=registry.cubic-dev.tech IMAGE_TAG=master-1 make push
 -------------------------------------------------------------------------------
 
 

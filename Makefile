@@ -55,7 +55,7 @@ build-frontend:
 	docker --log-level=debug build --pull --file=frontend/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/$(app_name)-frontend:${IMAGE_TAG} frontend
 
 build-api:
-	docker --log-level=debug build --pull --file=api/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/$(app_name)-nginx:${IMAGE_TAG} api
+	docker --log-level=debug build --pull --file=api/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/$(app_name)-api:${IMAGE_TAG} api
 	docker --log-level=debug build --pull --file=api/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/$(app_name)-api-php-fpm:${IMAGE_TAG} api
 	#docker --log-level=debug build --pull --file=api/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/$(app_name)-api-php-cli:${IMAGE_TAG} api
 
@@ -77,3 +77,24 @@ push-api:
 	docker push ${REGISTRY}/$(app_name)-api:${IMAGE_TAG}
 	docker push ${REGISTRY}/$(app_name)-api-php-fpm:${IMAGE_TAG}
 	#docker push ${REGISTRY}/$(app_name)-api-php-cli:${IMAGE_TAG}
+
+#========DEPLOY=============================================
+#деплоем наш сайт на продакте
+# HOST=deploy@33.444.33.33 PORT=22 REGISTRY=registry.cubic-dev.tech IMAGE_TAG=develop-1 BUILD_NUMBER=1 make deploy
+
+deploy:
+    # удаляем папку,если она есть
+	ssh ${HOST} -p ${PORT} 'rm -rf site_${BUILD_NUMBER}'
+	# создаем папку site_ с номер нашего билда (которую передаем в консоли)
+	ssh ${HOST} -p ${PORT} 'mkdir site_${BUILD_NUMBER}'
+	# копируем docker-compose-production
+	scp -P ${PORT} docker-compose-production.yml ${HOST}:site_${BUILD_NUMBER}/docker-compose.yml
+	# пишем в .env переменые
+	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && echo "COMPOSE_PROJECT_NAME=micro" >> .env'
+	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && echo "REGISTRY=${REGISTRY}" >> .env'
+	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && echo "IMAGE_TAG=${IMAGE_TAG}" >> .env'
+	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && docker-compose -f docker-compose.yml pull'
+	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && docker-compose -f docker-compose.yml up --build --remove-orphans -d'
+	# удаляем (если устарелы) и создаем новую символическую ссылку site -> site_BUILD_NUMBER
+	ssh ${HOST} -p ${PORT} 'rm -f site'
+	ssh ${HOST} -p ${PORT} 'ln -sr site_${BUILD_NUMBER} site'
