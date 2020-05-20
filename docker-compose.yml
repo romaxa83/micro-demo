@@ -33,11 +33,15 @@ services:
     volumes:
       - ./api:/app
     environment:
+      APP_ENV: 'dev'
       APP_DEBUG: 1
 
-#  api-php-cli:
-#      build:
-#        context: api/docker
-#        dockerfile: dev/php-cli/Dockerfile
-#      volumes:
-#        - ./api:/app
+  api-php-cli:
+    build:
+      context: api/docker
+      dockerfile: dev/php-cli/Dockerfile
+    volumes:
+      - ./api:/app
+    environment:
+      APP_ENV: 'dev'
+      APP_DEBUG: 1

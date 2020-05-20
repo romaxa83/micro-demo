@@ -46,7 +46,7 @@ info:
 # команды для сборки образов, для отправки в реестр (подобнее в info.txt)
 
 #билдим образы для всех сервисов
-build: build-gateway build-frontend build-api
+build-prod: build-gateway build-frontend build-api
 
 build-gateway:
 	docker --log-level=debug build --pull --file=gateway/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/$(app_name)-gateway:${IMAGE_TAG} gateway/docker
@@ -57,7 +57,7 @@ build-frontend:
 build-api:
 	docker --log-level=debug build --pull --file=api/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/$(app_name)-api:${IMAGE_TAG} api
 	docker --log-level=debug build --pull --file=api/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/$(app_name)-api-php-fpm:${IMAGE_TAG} api
-	#docker --log-level=debug build --pull --file=api/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/$(app_name)-api-php-cli:${IMAGE_TAG} api
+	docker --log-level=debug build --pull --file=api/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/$(app_name)-api-php-cli:${IMAGE_TAG} api
 
 # команда для дебага, чтоб посмотреть как будут собираться образы
 try-build:
@@ -76,7 +76,7 @@ push-frontend:
 push-api:
 	docker push ${REGISTRY}/$(app_name)-api:${IMAGE_TAG}
 	docker push ${REGISTRY}/$(app_name)-api-php-fpm:${IMAGE_TAG}
-	#docker push ${REGISTRY}/$(app_name)-api-php-cli:${IMAGE_TAG}
+	docker push ${REGISTRY}/$(app_name)-api-php-cli:${IMAGE_TAG}
 
 #========DEPLOY=============================================
 #деплоем наш сайт на продакте
