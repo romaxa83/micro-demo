@@ -30,8 +30,11 @@ services:
     build:
       context: api/docker
       dockerfile: dev/php-fpm/Dockerfile
+    container_name: php-fpm
     volumes:
       - ./api:/app
+      - ./api/docker/dev/php/.bashrc:/root/.bashrc
+      - ./api/docker/dev/php/.bash_aliases:/root/.bash_aliases
     environment:
       APP_ENV: 'dev'
       APP_DEBUG: 1
@@ -40,8 +43,11 @@ services:
     build:
       context: api/docker
       dockerfile: dev/php-cli/Dockerfile
+    container_name: php-cli
     volumes:
       - ./api:/app
+      - ./api/docker/dev/php/.bashrc:/root/.bashrc
+      - ./api/docker/dev/php/.bash_aliases:/root/.bash_aliases
     environment:
       APP_ENV: 'dev'
       APP_DEBUG: 1

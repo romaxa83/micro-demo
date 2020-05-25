@@ -2,6 +2,7 @@
 
 #=============VARIABLES================
 app_name = micro
+php_container = php-fpm
 #======================================
 
 #=====MAIN_COMMAND=====================
@@ -26,19 +27,24 @@ pull:
 build:
 	docker-compose build
 
-#=====COMMAND_FOR_API================================
+#=====COMMAND_FOR_API====================================
 
 api-init: api-composer-install
 
 api-composer-install:
 	docker-compose run --rm api-php-cli composer install
 
+#=======INTO_CONTAINER===================================
+
+php_bash:
+	docker exec -it $(php_container) bash
+
 #/////////////////////////////////////////////////////////
 #========INFORMATION=====================================
 
 info:
-	echo "API - http://localhost:8080";
-	echo "FRONT - http://localhost:8081";
+	echo "FRONT - http://localhost:8080";
+	echo "API - http://localhost:8081";
 
 #/////////////////////////////////////////////////////////
 #========FOR_PRODUCT======================================

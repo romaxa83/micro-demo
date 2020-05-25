@@ -19,10 +19,8 @@ $cli = new Application('Console');
  */
 $commands = $container->get('config')['console']['commands'];
 
-foreach ($commands as $name) {
-    /** @var Command $command */
-    $command = $container->get($name);
-    $cli->add($command);
+foreach ($commands as $command) {
+    $cli->add($container->get($command));
 }
 
 $cli->run();
