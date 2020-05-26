@@ -22,6 +22,7 @@
         "symfony/console": "^5.0"
     },
     "require-dev": {
+        "phpunit/phpunit": "^9.1",
         "roave/security-advisories": "dev-master"
     },
     "autoload": {
@@ -29,7 +30,13 @@
             "App\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\": "tests/"
+        }
+    },
     "scripts": {
-        "app": "php bin/app.php --ansi"
+        "app": "php bin/app.php --ansi",
+        "test": "phpunit --colors=always"
     }
 }

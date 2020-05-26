@@ -65,3 +65,6 @@ roles/docker - устанавливает на сервере docker
 ----------------------------------------------------------------------------
 Запуск консольных приложений
 - docker-compose run --rm api-php-cli php bin/app.php
+
+Установка пакетов
+- docker-compose run --rm api-php-cli composer require --dev phpunit/phpunit

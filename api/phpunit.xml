@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.1/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         executionOrder="depends,defects"
+         forceCoversAnnotation="true"
+         beStrictAboutCoversAnnotation="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         cacheResultFile="var/.phpunit.result.cache"
+         verbose="true">
+    <!-- Указываеться где храняться тесты-->
+    <testsuites>
+        <testsuite name="default">
+            <!-- suffix - указывает как должны заканчивать файлы с тестами-->
+            <directory suffix="Test.php">tests</directory>
+        </testsuite>
+    </testsuites>
+    <!-- Указываеться папка которая будет учитываться при анализе покрытия кода тестами-->
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+    <!-- Переменные окружения для тестов -->
+    <php>
+        <env name="APP_ENV" value="test" force="true"/>
+        <env name="APP_DEBUG" value="1" force="true"/>
+    </php>
+</phpunit>

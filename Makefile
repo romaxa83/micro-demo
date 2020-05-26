@@ -9,6 +9,7 @@ php_container = php-fpm
 
 init: down pull build up api-init info
 up: up_docker info
+test: test-api
 
 up_docker:
 	docker-compose up -d
@@ -38,6 +39,11 @@ api-composer-install:
 
 php_bash:
 	docker exec -it $(php_container) bash
+
+#========TEST_API========================================
+
+test-api:
+	docker-compose run --rm api-php-cli composer test
 
 #/////////////////////////////////////////////////////////
 #========INFORMATION=====================================
