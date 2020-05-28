@@ -6,5 +6,5 @@ use Slim\App;
 use Slim\Middleware\ErrorMiddleware;
 
 return static function(App $app): void {
-//    $app->add(ErrorMiddleware::class);
+    $app->add(ErrorMiddleware::class);
 };

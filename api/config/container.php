@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-$builder = new \DI\ContainerBuilder();
+use DI\ContainerBuilder;
 
+$builder = new ContainerBuilder();
 $builder->addDefinitions(require __DIR__ . '/dependencies.php');
 
 return $builder->build();

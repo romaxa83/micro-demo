@@ -9,65 +9,46 @@ use PHPUnit\Framework\TestCase;
 
 class JsonResponseTest extends TestCase
 {
-    /** @test */
-    public function check_int(): void
+    /**
+     * @test
+     * @dataProvider getCases
+     * @param mixed $source
+     * @param mixed $expect
+     */
+    public function response($source, $expect): void
     {
-        $response = new JsonResponse(12);
-
-        self::assertEquals('12', $response->getBody()->getContents());
-        self::assertEquals(200, $response->getStatusCode());
-    }
-
-    /** @test */
-    public function check_int_with_status_code(): void
-    {
-        $response = new JsonResponse(12,201);
+        $response = new JsonResponse($source);
 
         self::assertEquals('application/json', $response->getHeaderLine('Content-Type'));
-        self::assertEquals('12', $response->getBody()->getContents());
-        self::assertEquals(201, $response->getStatusCode());
-    }
-
-    /** @test */
-    public function check_null(): void
-    {
-        $response = new JsonResponse(null);
-
-        self::assertEquals('null', $response->getBody()->getContents());
+        self::assertEquals($expect, $response->getBody()->getContents());
         self::assertEquals(200, $response->getStatusCode());
     }
 
-    /** @test */
-    public function check_string(): void
-    {
-        $response = new JsonResponse('string');
-
-        self::assertEquals('"string"', $response->getBody()->getContents());
-        self::assertEquals(200, $response->getStatusCode());
-    }
-
-    /** @test */
-    public function check_object(): void
+    public function getCases(): array
     {
         $object = new \stdClass();
         $object->str = 'value';
         $object->int = 1;
         $object->none = null;
 
-        $response = new JsonResponse($object);
+        $array = ['str' => 'value', 'int' => 1, 'none' => null];
 
-        self::assertEquals('{"str":"value","int":1,"none":null}', $response->getBody()->getContents());
-        self::assertEquals(200, $response->getStatusCode());
+        return [
+            'null' => [null, 'null'],
+            'empty' => ['', '""'],
+            'number' => [12, 12],
+            'string' => ['12', '"12"'],
+            'object' => [$object, '{"str":"value","int":1,"none":null}'],
+            'array' => [$array, '{"str":"value","int":1,"none":null}'],
+        ];
     }
 
     /** @test */
-    public function check_array(): void
+    public function check_response_with_status_code(): void
     {
-        $array = ['str' => 'value', 'int' => 1, 'none' => null];
+        $response = new JsonResponse(12,201);
 
-        $response = new JsonResponse($array);
-
-        self::assertEquals('{"str":"value","int":1,"none":null}', $response->getBody()->getContents());
-        self::assertEquals(200, $response->getStatusCode());
+        self::assertEquals('application/json', $response->getHeaderLine('Content-Type'));
+        self::assertEquals(201, $response->getStatusCode());
     }
 }
