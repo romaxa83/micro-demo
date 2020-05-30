@@ -1,7 +1,12 @@
+# Для оптимизации используем мультистадийную сборку
+# весь сборочный софт используем в первом образе, а
+# второй собираем максимально облегченым ,и нужные для работы файлы копируем из первого образа (билдера).
+# То что меняеться часто прописываем внизу, а что реже вверху, чтобы сборка происходил быстрее
+# т.к. файлы в которых нет изменений тянуться из кеш
 FROM php:7.4-cli-alpine AS builder
 
 RUN docker-php-ext-install opcache
-
+# устанавливаем пакет unzip что распаковать пакета с composer
 RUN apk add --no-cache unzip
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -16,7 +21,8 @@ WORKDIR /app
 # копируем файлы , чтоб установить вендор
 COPY ./composer.json ./composer.lock ./
 
-RUN composer install --no-dev --prefer-dist --no-progress --no-suggest --no-scripts --optimize-autoload \
+# устанавливаем вендор
+RUN composer install --no-dev --prefer-dist --no-progress --no-suggest --no-scripts --optimize-autoloader \
     && rm -rf /root/.composer/cache
 
 #### FPM

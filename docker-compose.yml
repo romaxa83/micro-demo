@@ -16,6 +16,25 @@ services:
       context: frontend/docker/dev/nginx
     volumes:
       - ./frontend:/app
+    depends_on:
+      - frontend-node
+
+# сервис подымаеться для запуска команды yarn start (которая запустит фронт)
+  frontend-node:
+    build:
+      context: frontend/docker/dev/node
+    volumes:
+      - ./frontend:/app
+# команда будет ждать пока не появиться файл .ready (создаеться когда установяться все зависимости для фронта)
+# и потом запустит команду yarn start
+    command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn start"
+    tty: true
+
+  frontend-node-cli:
+    build:
+      context: frontend/docker/dev/node
+    volumes:
+      - ./frontend:/app
 
   api:
     build:

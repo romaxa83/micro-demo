@@ -7,7 +7,10 @@ php_container = php-fpm
 
 #=====MAIN_COMMAND=====================
 
-init: down api-clear pull build up api-init info
+init: down-clear api-clear frontend-clear \
+ 		pull build up \
+		api-init frontend-init info
+
 up: up_docker info
 test: api-test
 
@@ -30,14 +33,33 @@ build:
 
 #=====COMMAND_FOR_API====================================
 
-api-init: api-composer-install
+api-init: api-composer-install api-permissions
 
 api-composer-install:
 	docker-compose run --rm api-php-cli composer install
 
+api-permissions:
+	docker run --rm -v ${PWD}/api:/app -w /app alpine chmod 777 var/cache var/log var/test
+
 # удаляеь весь мусор из папки var
 api-clear:
 	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf var/cache/* var/log/* var/test/*'
+
+#======COMMAND_FO_FRONTEND===============================
+
+frontend-clear:
+	docker run --rm -v ${PWD}/frontend:/app -w /app alpine sh -c 'rm -rf .ready build'
+
+frontend-init: frontend-yarn-install frontend-ready
+
+frontend-yarn-install:
+	docker-compose run --rm frontend-node-cli yarn install
+
+# команда создает файл .ready в папке frontend, файл создаеться
+# чтобы понимать что установились все зависимости для фронта
+# и можно запустить фронт, в противном случае он вылезет с ошибкой
+frontend-ready:
+	docker run --rm -v ${PWD}/frontend:/app -w /app alpine touch .ready
 
 #=======INTO_CONTAINER===================================
 
@@ -80,19 +102,19 @@ info:
 build-prod: build-gateway build-frontend build-api
 
 build-gateway:
-	docker --log-level=debug build --pull --file=gateway/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/$(app_name)-gateway:${IMAGE_TAG} gateway/docker
+	docker --log-level=debug build --pull --file=gateway/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/micro-gateway:${IMAGE_TAG} gateway/docker
 
 build-frontend:
-	docker --log-level=debug build --pull --file=frontend/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/$(app_name)-frontend:${IMAGE_TAG} frontend
+	docker --log-level=debug build --pull --file=frontend/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/micro-frontend:${IMAGE_TAG} frontend
 
 build-api:
-	docker --log-level=debug build --pull --file=api/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/$(app_name)-api:${IMAGE_TAG} api
-	docker --log-level=debug build --pull --file=api/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/$(app_name)-api-php-fpm:${IMAGE_TAG} api
-	docker --log-level=debug build --pull --file=api/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/$(app_name)-api-php-cli:${IMAGE_TAG} api
+	docker --log-level=debug build --pull --file=api/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/micro-api:${IMAGE_TAG} api
+	docker --log-level=debug build --pull --file=api/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/micro-api-php-fpm:${IMAGE_TAG} api
+	docker --log-level=debug build --pull --file=api/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/micro-api-php-cli:${IMAGE_TAG} api
 
 # команда для дебага, чтоб посмотреть как будут собираться образы
 try-build:
-	REGISTRY=localhost IMAGE_TAG=0 make build
+	REGISTRY=localhost IMAGE_TAG=0 make build-prod
 #========PUSH_IMAGE_FOR_REGISTRY============================
 # пушим образы в реестр
 

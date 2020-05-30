@@ -8,8 +8,8 @@ all:
                     ansible_user: root
                     ansible_host: 0.0.0.0
                     ansible_port: 22
-                    # указываем путь к интерпретатору python на удаленом сервере
-                    ansible_python_interpreter: /usr/bin/python3
+                    # указываем путь к интерпретатору python на удаленом сервере (раскоментировать есди требуеться)
+                    # ansible_python_interpreter: /usr/bin/python3
         db:
             hosts:
                 server:
@@ -18,7 +18,7 @@ all:
                     ansible_host: 0.0.0.0
                     ansible_port: 22
                     # указываем путь к интерпретатору python на удаленом сервере
-                    ansible_python_interpreter: /usr/bin/python3
+                    # ansible_python_interpreter: /usr/bin/python3
         queue:
             hosts:
                 server:
@@ -27,4 +27,4 @@ all:
                     ansible_host: 0.0.0.0
                     ansible_port: 22
                     # указываем путь к интерпретатору python на удаленом сервере
-                    ansible_python_interpreter: /usr/bin/python3
+                    # ansible_python_interpreter: /usr/bin/python3
