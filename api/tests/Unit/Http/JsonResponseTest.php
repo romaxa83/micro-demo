@@ -7,6 +7,11 @@ namespace Test\Unit\Http;
 use App\Http\JsonResponse;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * аннотация указывает ,чтоб проверить покрытие только класса JsonResponse
+ * и не учиывать другие ,вспомагательные классы, которые могут встретиться в тестах
+ * @covers \App\Http\JsonResponse
+ */
 class JsonResponseTest extends TestCase
 {
     /**

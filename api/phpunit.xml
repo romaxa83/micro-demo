@@ -7,13 +7,17 @@
          beStrictAboutCoversAnnotation="true"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
-         cacheResultFile="var/.phpunit.result.cache"
+         cacheResultFile="var/cache/.phpunit.result.cache"
          verbose="true">
     <!-- Указываеться где храняться тесты-->
     <testsuites>
-        <testsuite name="default">
+        <testsuite name="unit">
             <!-- suffix - указывает как должны заканчивать файлы с тестами-->
-            <directory suffix="Test.php">tests</directory>
+            <directory suffix="Test.php">tests/Unit</directory>
+        </testsuite>
+        <testsuite name="functional">
+            <!-- suffix - указывает как должны заканчивать файлы с тестами-->
+            <directory suffix="Test.php">tests/Functional</directory>
         </testsuite>
     </testsuites>
     <!-- Указываеться папка которая будет учитываться при анализе покрытия кода тестами-->

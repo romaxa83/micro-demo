@@ -7,9 +7,9 @@ php_container = php-fpm
 
 #=====MAIN_COMMAND=====================
 
-init: down pull build up api-init info
+init: down api-clear pull build up api-init info
 up: up_docker info
-test: test-api
+test: api-test
 
 up_docker:
 	docker-compose up -d
@@ -35,6 +35,10 @@ api-init: api-composer-install
 api-composer-install:
 	docker-compose run --rm api-php-cli composer install
 
+# удаляеь весь мусор из папки var
+api-clear:
+	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf var/cache/* var/log/* var/test/*'
+
 #=======INTO_CONTAINER===================================
 
 php_bash:
@@ -42,9 +46,24 @@ php_bash:
 
 #========TEST_API========================================
 
-test-api:
+api-test:
 	docker-compose run --rm api-php-cli composer test
 
+api-test-unit:
+	docker-compose run --rm api-php-cli composer test -- --testsuit=unit
+
+api-test-functional:
+	docker-compose run --rm api-php-cli composer test -- --testsuit=functional
+
+# запускает тесты с анализом покрытия
+test-coverage:
+	docker-compose run --rm api-php-cli composer test-coverage
+
+test-unit-coverage:
+	docker-compose run --rm api-php-cli composer test-coverage -- --testsuite=unit
+
+test-functional-coverage:
+	docker-compose run --rm api-php-cli composer test-coverage -- --testsuite=functional
 #/////////////////////////////////////////////////////////
 #========INFORMATION=====================================
 

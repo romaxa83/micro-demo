@@ -31,6 +31,7 @@ services:
       context: api/docker
       dockerfile: dev/php-fpm/Dockerfile
     container_name: php-fpm
+    hostname: php-fpm
     volumes:
       - ./api:/app
       - ./api/docker/dev/php/.bashrc:/root/.bashrc
@@ -44,6 +45,7 @@ services:
       context: api/docker
       dockerfile: dev/php-cli/Dockerfile
     container_name: php-cli
+    hostname: php-cli
     volumes:
       - ./api:/app
       - ./api/docker/dev/php/.bashrc:/root/.bashrc

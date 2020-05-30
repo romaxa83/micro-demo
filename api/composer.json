@@ -38,6 +38,7 @@
     },
     "scripts": {
         "app": "php bin/app.php --ansi",
-        "test": "phpunit --colors=always"
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-html var/test/coverage"
     }
 }

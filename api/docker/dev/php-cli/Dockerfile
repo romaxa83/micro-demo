@@ -1,5 +1,7 @@
 FROM php:7.4-cli-alpine
 
+RUN apk add --no-cache bash coreutils
+
 # устанавливаем xdebug
 RUN apk add --no-cache autoconf g++ make \
     && pecl install xdebug \

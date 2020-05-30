@@ -27,7 +27,7 @@ return [
             $callableResolver,
             $responseFactory,
             $config['display_details'],
-            true,
+            getenv('APP_ENV') != 'test',
             true
         );
 
