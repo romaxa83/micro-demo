@@ -2,3 +2,4 @@
 .idea/
 provisioning/hosts
 provisioning/*retry
+.phpunit.result.cache
