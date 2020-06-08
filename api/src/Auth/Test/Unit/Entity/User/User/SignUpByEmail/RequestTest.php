@@ -17,7 +17,7 @@ class RequestTest extends TestCase
     /** @test */
     public function success(): void
     {
-        $user = new User(
+        $user = User::requestSignUpByEmail(
             $id = Id::generate(),
             $date = new \DateTimeImmutable(),
             $email = new Email('user@user.com'),

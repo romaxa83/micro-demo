@@ -15,28 +15,56 @@ class User
      * @var Email
      */
     private Email $email;
-    private string $passwordHash;
+    private ?string $passwordHash = null;
     /**
      * @var Token
      */
-    private ?Token $signUpConfirmToken;
+    private ?Token $signUpConfirmToken = null;
 
     private Status $status;
+
+    private \ArrayObject $networks;
 
     public function __construct(
         Id $id,
         \DateTimeImmutable $date,
         Email $email,
-        string $passwordHash,
-        Token $token
+        Status $status
     )
     {
         $this->id = $id;
         $this->date = $date;
         $this->email = $email;
-        $this->passwordHash = $passwordHash;
-        $this->signUpConfirmToken = $token;
-        $this->status = Status::wait();
+        $this->status = $status;
+        $this->networks = new \ArrayObject();
+    }
+
+    public static function requestSignUpByEmail(
+        Id $id,
+        \DateTimeImmutable $date,
+        Email $email,
+        string $passwordHash,
+        Token $token
+    ):self
+    {
+        $user = new self($id, $date, $email, Status::wait());
+        $user->passwordHash = $passwordHash;
+        $user->signUpConfirmToken = $token;
+
+        return $user;
+    }
+
+    public static function signUpByNetwork(
+        Id $id,
+        \DateTimeImmutable $date,
+        Email $email,
+        NetworkIdentity $identity
+    ):self
+    {
+        $user = new self($id, $date, $email, Status::active());
+        $user->networks->append($identity);
+
+        return $user;
     }
 
     public function confirmSignUp(string $token, \DateTimeImmutable $date): void
@@ -48,6 +76,17 @@ class User
         $this->signUpConfirmToken->validate($token, $date);
         $this->status = Status::active();
         $this->signUpConfirmToken = null;
+    }
+
+    public function attachNetwork(NetworkIdentity $identity): void
+    {
+        /** @var $existing NetworkIdentity */
+        foreach ($this->networks as $existing){
+            if($existing->isEqual($identity)){
+                throw new \DomainException('Network is already attached.');
+            }
+        }
+        $this->networks->append($identity);
     }
 
     /**
@@ -88,6 +127,15 @@ class User
     public function getSignUpConfirmToken(): ?Token
     {
         return $this->signUpConfirmToken;
+    }
+
+    /**
+     * @return NetworkIdentity[]
+     */
+    public function getNetworks(): array
+    {
+        /** @var NetworkIdentity[] */
+        return $this->networks->getArrayCopy();
     }
 
     public function isWait(): bool
