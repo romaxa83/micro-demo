@@ -6,23 +6,13 @@ namespace App\Auth\Entity\User;
 
 class User
 {
-    /**
-     * @var Id
-     */
     private Id $id;
     private \DateTimeImmutable $date;
-    /**
-     * @var Email
-     */
     private Email $email;
     private ?string $passwordHash = null;
-    /**
-     * @var Token
-     */
     private ?Token $signUpConfirmToken = null;
-
+    private ?Token $passwordResetToken = null;
     private Status $status;
-
     private \ArrayObject $networks;
 
     public function __construct(
@@ -78,6 +68,17 @@ class User
         $this->signUpConfirmToken = null;
     }
 
+    public function requestPasswordReset(Token $token, \DateTimeImmutable $date)
+    {
+        if(!$this->isActive()){
+            throw new \DomainException('User is not active.');
+        }
+        if($this->passwordResetToken !== null && !$this->passwordResetToken->isExpiredTo($date)){
+            throw new \DomainException('Resetting is already requested.');
+        }
+        $this->passwordResetToken = $token;
+    }
+
     public function attachNetwork(NetworkIdentity $identity): void
     {
         /** @var $existing NetworkIdentity */
@@ -87,6 +88,16 @@ class User
             }
         }
         $this->networks->append($identity);
+    }
+
+    public function resetPassword(string $token, \DateTimeImmutable $date, string $hash): void
+    {
+        if($this->passwordResetToken === null){
+            throw new \DomainException('Resetting is not requested.');
+        }
+        $this->passwordResetToken->validate($token, $date);
+        $this->passwordResetToken = null;
+        $this->passwordHash = $hash;
     }
 
     /**
@@ -127,6 +138,11 @@ class User
     public function getSignUpConfirmToken(): ?Token
     {
         return $this->signUpConfirmToken;
+    }
+
+    public function getPasswordResetToken(): ?Token
+    {
+        return $this->passwordResetToken;
     }
 
     /**
