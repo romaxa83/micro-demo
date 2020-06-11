@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Auth\Entity\User;
 
+use App\Auth\Service\PasswordHasher;
+
 class User
 {
     private Id $id;
@@ -78,6 +80,18 @@ class User
         }
         $this->passwordResetToken = $token;
     }
+
+    public function changePassword(string $current, string $new, PasswordHasher $hasher): void
+    {
+        if ($this->passwordHash === null) {
+            throw new \DomainException('User does not have an old password.');
+        }
+        if (!$hasher->validate($current, $this->passwordHash)) {
+            throw new \DomainException('Incorrect current password.');
+        }
+        $this->passwordHash = $hasher->hash($new);
+    }
+
 
     public function attachNetwork(NetworkIdentity $identity): void
     {
