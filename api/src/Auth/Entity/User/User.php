@@ -18,6 +18,7 @@ class User
     private \ArrayObject $networks;
     private ?Email $newEmail = null;
     private ?Token $newEmailToken = null;
+    private Role $role;
 
     public function __construct(
         Id $id,
@@ -30,6 +31,7 @@ class User
         $this->date = $date;
         $this->email = $email;
         $this->status = $status;
+        $this->role = Role::user();
         $this->networks = new \ArrayObject();
     }
 
@@ -143,41 +145,39 @@ class User
         $this->passwordHash = $hash;
     }
 
-    /**
-     * @return Id
-     */
+    public function changeRole(Role $role): void
+    {
+        if($this->role->isEqualTo($role)){
+            throw new \DomainException('Role is already same.');
+        }
+        $this->role = $role;
+    }
+
     public function getId(): Id
     {
         return $this->id;
     }
 
-    /**
-     * @return \DateTimeImmutable
-     */
     public function getDate(): \DateTimeImmutable
     {
         return $this->date;
     }
 
-    /**
-     * @return Email
-     */
     public function getEmail(): Email
     {
         return $this->email;
     }
 
-    /**
-     * @return string
-     */
+    public function getRole(): Role
+    {
+        return $this->role;
+    }
+
     public function getPasswordHash(): ?string
     {
         return $this->passwordHash;
     }
 
-    /**
-     * @return Token
-     */
     public function getSignUpConfirmToken(): ?Token
     {
         return $this->signUpConfirmToken;
