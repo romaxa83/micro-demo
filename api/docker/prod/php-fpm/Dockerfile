@@ -5,7 +5,9 @@
 # т.к. файлы в которых нет изменений тянуться из кеш
 FROM php:7.4-cli-alpine AS builder
 
-RUN docker-php-ext-install opcache
+RUN apk add --no-cache postgresql-dev \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pdo_pgsql opcache
 # устанавливаем пакет unzip что распаковать пакета с composer
 RUN apk add --no-cache unzip
 
@@ -29,7 +31,9 @@ RUN composer install --no-dev --prefer-dist --no-progress --no-suggest --no-scri
 
 FROM php:7.4-fpm-alpine
 
-RUN docker-php-ext-install opcache
+RUN apk add --no-cache postgresql-dev bash coreutils \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pdo_pgsql opcache
 
 RUN mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 

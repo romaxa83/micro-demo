@@ -30,9 +30,31 @@ services:
     environment:
       APP_ENV: 'prod'
       APP_DEBUG: 0
+      DB_HOST: api-postgres
+      DB_USER: cubic
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: micro
 
   api-php-cli:
     image: ${REGISTRY}/micro-api-php-cli:${IMAGE_TAG}
     environment:
       APP_ENV: 'prod'
       APP_DEBUG: 0
+      DB_HOST: api-postgres
+      DB_USER: cubic
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: micro
+
+  api-postgres:
+    image: postgres:12.2-alpine
+    environment:
+      POSTGRES_USER: cubic
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: micro
+    volumes:
+      - api-postgres:/var/lib/postgresql/data
+    ports:
+      - "54321:5432"
+
+volumes:
+  api-postgres:

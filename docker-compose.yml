@@ -56,8 +56,13 @@ services:
       - ./api/docker/dev/php/.bashrc:/root/.bashrc
       - ./api/docker/dev/php/.bash_aliases:/root/.bash_aliases
     environment:
+      TERM: xterm-256color
       APP_ENV: 'dev'
       APP_DEBUG: 1
+      DB_HOST: api-postgres
+      DB_USER: cubic
+      DB_PASSWORD: password
+      DB_NAME: micro
 
   api-php-cli:
     build:
@@ -72,3 +77,21 @@ services:
     environment:
       APP_ENV: 'dev'
       APP_DEBUG: 1
+      DB_HOST: api-postgres
+      DB_USER: cubic
+      DB_PASSWORD: password
+      DB_NAME: micro
+
+  api-postgres:
+    image: postgres:12.2-alpine
+    environment:
+      POSTGRES_USER: cubic
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: micro
+    volumes:
+      - api-postgres:/var/lib/postgresql/data
+    ports:
+      - "54321:5432"
+
+volumes:
+  api-postgres:
