@@ -6,7 +6,7 @@ namespace App\Auth\Command\ChangeEmail\Request;
 
 use App\Auth\Entity\User\Email;
 use App\Auth\Entity\User\Id;
-use App\Auth\Entity\User\NetworkIdentity;
+use App\Auth\Entity\User\Network;
 use App\Auth\Entity\User\UserRepository;
 use App\Auth\Service\NewEmailConfirmSender;
 use App\Auth\Service\PasswordHasher;

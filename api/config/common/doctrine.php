@@ -20,7 +20,7 @@ return [
         $settings = $container->get('config')['doctrine'];
 
         $config = Setup::createAnnotationMetadataConfiguration(
-            $settings['metadata_dirs'],// передаем папки, где храняться сущьности с аннотациями
+            $settings['metadata_dirs'],// передаем папки, где храняться сущности с аннотациями
             $settings['dev_mode'],  // в каком режими работаем
             $settings['proxy_dir'],
             $settings['cache_dir'] ? new FilesystemCache($settings['cache_dir']) : new ArrayCache(),
@@ -29,12 +29,13 @@ return [
 
         // стратеги для именования полей в бд
         $config->setNamingStrategy(new UnderscoreNamingStrategy());
-//
-//        foreach ($settings['types'] as $name => $class) {
-//            if (!Type::hasType($name)) {
-//                Type::addType($name, $class);
-//            }
-//        }
+
+        // добавляем наши типы данных
+        foreach ($settings['types'] as $name => $class) {
+            if (!Type::hasType($name)) {
+                Type::addType($name, $class);
+            }
+        }
 //
 //        $eventManager = new EventManager();
 //
@@ -69,10 +70,10 @@ return [
                 __DIR__ . '/../../src/Auth/Entity'
             ],
             'types' => [
-//                Auth\Entity\User\IdType::NAME => Auth\Entity\User\IdType::class,
-//                Auth\Entity\User\EmailType::NAME => Auth\Entity\User\EmailType::class,
-//                Auth\Entity\User\RoleType::NAME => Auth\Entity\User\RoleType::class,
-//                Auth\Entity\User\StatusType::NAME => Auth\Entity\User\StatusType::class,
+                Auth\Entity\User\Types\IdType::NAME => Auth\Entity\User\Types\IdType::class,
+                Auth\Entity\User\Types\EmailType::NAME => Auth\Entity\User\Types\EmailType::class,
+                Auth\Entity\User\Types\RoleType::NAME => Auth\Entity\User\Types\RoleType::class,
+                Auth\Entity\User\Types\StatusType::NAME => Auth\Entity\User\Types\StatusType::class,
             ],
         ],
     ],

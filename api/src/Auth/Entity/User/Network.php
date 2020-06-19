@@ -5,14 +5,25 @@ declare(strict_types=1);
 namespace App\Auth\Entity\User;
 
 use Webmozart\Assert\Assert;
+use Doctrine\ORM\Mapping as ORM;
 
-class NetworkIdentity
+/**
+ * @ORM\Embeddable
+ */
+class Network
 {
-    private string $network;
+    /**
+     * @ORM\Column(type="string", length=16)
+     */
+    private string $name;
+
+    /**
+     * @ORM\Column(type="string", length=16)
+     */
     private string $identity;
 
     /**
-     * NetworkIdentity constructor.
+     * Network constructor.
      * @param string $network
      * @param string $identity
      */
@@ -26,11 +37,11 @@ class NetworkIdentity
 
     public function isEqual(self $network): bool
     {
-        return $this->getNetwork() === $network->getNetwork() &&
+        return $this->getName() === $network->getName() &&
             $this->getIdentity() === $network->getIdentity();
     }
 
-    public function getNetwork(): string
+    public function getName(): string
     {
         return $this->network;
     }

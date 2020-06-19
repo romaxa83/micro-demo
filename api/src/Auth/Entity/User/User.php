@@ -5,20 +5,73 @@ declare(strict_types=1);
 namespace App\Auth\Entity\User;
 
 use App\Auth\Service\PasswordHasher;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
+
+/**
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
+ * @ORM\Table(name="auth_users")
+ */
 class User
 {
+    /**
+     * @ORM\Column(type="auth_user_id")
+     * @ORM\Id
+     */
     private Id $id;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
     private \DateTimeImmutable $date;
+
+    /**
+     * @ORM\Column(type="auth_user_email", unique=true)
+     */
     private Email $email;
+
+    /**
+     * @ORM\Column(type="string",  nullable=true)
+     */
     private ?string $passwordHash = null;
+
+    /**
+     * @ORM\Embedded(class="Token")
+     */
     private ?Token $signUpConfirmToken = null;
+
+    /**
+     * @ORM\Embedded(class="Token")
+     */
     private ?Token $passwordResetToken = null;
+
+    /**
+     * @ORM\Column(type="auth_user_status", length=16)
+     */
     private Status $status;
-    private \ArrayObject $networks;
+
+    /**
+     * @ORM\Column(type="auth_user_email", nullable=true)
+     */
     private ?Email $newEmail = null;
+
+    /**
+     * @ORM\Embedded(class="Token")
+     */
     private ?Token $newEmailToken = null;
+
+    /**
+     * @ORM\Column(type="auth_user_role", length=16)
+     */
     private Role $role;
+
+    /**
+     * @ORM\OneToMany(targetEntity="UserNetwork", mappedBy="user", cascade={"all"}, orphanRemoval=true)
+     */
+    private Collection $networks;
 
     public function __construct(
         Id $id,
@@ -32,7 +85,7 @@ class User
         $this->email = $email;
         $this->status = $status;
         $this->role = Role::user();
-        $this->networks = new \ArrayObject();
+        $this->networks = new ArrayCollection();
     }
 
     public static function requestSignUpByEmail(
@@ -54,11 +107,11 @@ class User
         Id $id,
         \DateTimeImmutable $date,
         Email $email,
-        NetworkIdentity $identity
+        Network $network
     ):self
     {
         $user = new self($id, $date, $email, Status::active());
-        $user->networks->append($identity);
+        $user->networks->add(new UserNetwork($user, $network));
 
         return $user;
     }
@@ -124,15 +177,15 @@ class User
         $this->newEmailToken = null;
     }
 
-    public function attachNetwork(NetworkIdentity $identity): void
+    public function attachNetwork(Network $network): void
     {
-        /** @var $existing NetworkIdentity */
+        /** @var $existing UserNetwork */
         foreach ($this->networks as $existing){
-            if($existing->isEqual($identity)){
+            if($existing->getNetwork()->isEqual($network)){
                 throw new \DomainException('Network is already attached.');
             }
         }
-        $this->networks->append($identity);
+        $this->networks->add(new UserNetwork($this, $network));
     }
 
     public function resetPassword(string $token, \DateTimeImmutable $date, string $hash): void
@@ -196,12 +249,14 @@ class User
     }
 
     /**
-     * @return NetworkIdentity[]
+     * @return Network[]
      */
     public function getNetworks(): array
     {
-        /** @var NetworkIdentity[] */
-        return $this->networks->getArrayCopy();
+        /** @var Network[] */
+        return $this->networks->map(static function (UserNetwork $network) {
+            return $network->getNetwork();
+        })->toArray();
     }
 
     public function getNewEmail(): ?Email
@@ -222,6 +277,24 @@ class User
     public function isActive(): bool
     {
         return $this->status->isActive();
+    }
+
+    /**
+     * обнуляем токены если они пустые
+     * метод выполниться после загрузки user из бд
+     * @ORM\PostLoad()
+     */
+    public function checkEmbeds(): void
+    {
+        if($this->signUpConfirmToken && $this->signUpConfirmToken->isEmpty()){
+            $this->signUpConfirmToken = null;
+        }
+        if($this->passwordResetToken && $this->passwordResetToken->isEmpty()){
+            $this->passwordResetToken = null;
+        }
+        if($this->newEmailToken && $this->newEmailToken->isEmpty()){
+            $this->newEmailToken = null;
+        }
     }
 }
 
