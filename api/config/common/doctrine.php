@@ -36,19 +36,19 @@ return [
                 Type::addType($name, $class);
             }
         }
-//
-//        $eventManager = new EventManager();
-//
-//        foreach ($settings['subscribers'] as $name) {
-//            /** @var EventSubscriber $subscriber */
-//            $subscriber = $container->get($name);
-//            $eventManager->addEventSubscriber($subscriber);
-//        }
+
+        $eventManager = new EventManager();
+
+        foreach ($settings['subscribers'] as $name) {
+            /** @var EventSubscriber $subscriber */
+            $subscriber = $container->get($name);
+            $eventManager->addEventSubscriber($subscriber);
+        }
 
         return EntityManager::create(
             $settings['connection'],
             $config,
-//            $eventManager
+            $eventManager
         );
     },
 

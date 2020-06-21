@@ -32,6 +32,9 @@ RUN mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 COPY ./docker/common/php/conf.d /usr/local/etc/php/conf.d
 COPY ./docker/prod/php/conf.d /usr/local/etc/php/conf.d
 
+COPY ./docker/common/wait-for-it.sh /usr/local/bin/wait-for-it
+RUN chmod 555 /usr/local/bin/wait-for-it
+
 WORKDIR /app
 
 COPY --from=builder /app ./

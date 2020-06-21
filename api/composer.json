@@ -15,7 +15,7 @@
     "require": {
         "php": "^7.4",
         "ext-json": "^7.4",
-        "doctrine/migrations": "^3.0",
+        "doctrine/migrations": "^2.2",
         "doctrine/orm": "^2.7",
         "laminas/laminas-config-aggregator": "^1.2",
         "php-di/php-di": "^6.0",
@@ -26,6 +26,7 @@
         "webmozart/assert": "^1.8"
     },
     "require-dev": {
+        "doctrine/data-fixtures": "^1.4",
         "phpunit/phpunit": "^9.1",
         "roave/security-advisories": "dev-master"
     },
