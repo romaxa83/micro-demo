@@ -12,6 +12,8 @@ init: down-clear api-clear frontend-clear \
 		api-init frontend-init info
 
 up: up_docker info
+check: api-validate-schema test
+rebuild: down build up info
 test: api-test
 
 up_docker:
@@ -33,17 +35,34 @@ build:
 
 #=====COMMAND_FOR_API====================================
 
-api-init: api-composer-install api-permissions
+api-init: api-composer-install api-permissions api-wait-db api-migrations api-fixtures
 
 api-composer-install:
 	docker-compose run --rm api-php-cli composer install
 
 api-permissions:
 	docker run --rm -v ${PWD}/api:/app -w /app alpine chmod 777 var/cache var/log var/test
+	sudo chmod 777 -R api/src/Data/Migration
 
 # удаляеь весь мусор из папки var
 api-clear:
 	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf var/cache/* var/log/* var/test/*'
+
+# ждет поднятие базы данных
+api-wait-db:
+	docker-compose run --rm api-php-cli wait-for-it api-postgres:5432 -t 30
+
+api-migrations-diff:
+	docker-compose run --rm api-php-cli composer app migrations:diff
+
+api-migrations:
+	docker-compose run --rm api-php-cli composer app migrations:migrate
+
+api-fixtures:
+	docker-compose run --rm api-php-cli composer app fixtures:load
+
+api-validate-schema:
+	docker-compose run --rm api-php-cli composer app orm:validate-schema
 
 #======COMMAND_FO_FRONTEND===============================
 
@@ -146,7 +165,11 @@ deploy:
 	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && echo "COMPOSE_PROJECT_NAME=micro" >> .env'
 	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && echo "REGISTRY=${REGISTRY}" >> .env'
 	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && echo "IMAGE_TAG=${IMAGE_TAG}" >> .env'
+	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && echo "API_DB_PASSWORD=${IMAGE_TAG}" >> .env'
 	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && docker-compose -f docker-compose.yml pull'
+	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && docker-compose -f docker-compose.yml up --build -d api-postgres'
+	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && docker-compose run api-php-cli wait-for-it api-postgres:5432 -t 60'
+    ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && docker-compose run api-php-cli php bin/app.php migrations:migrate --no-interaction'
 	ssh ${HOST} -p ${PORT} 'cd site_${BUILD_NUMBER} && docker-compose -f docker-compose.yml up --build --remove-orphans -d'
 	# удаляем (если устарелы) и создаем новую символическую ссылку site -> site_BUILD_NUMBER
 	ssh ${HOST} -p ${PORT} 'rm -f site'

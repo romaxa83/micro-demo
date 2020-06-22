@@ -30,6 +30,7 @@ return [
                 SchemaTool\DropCommand::class,
                 Migrations\Tools\Console\Command\DiffCommand::class,
                 Migrations\Tools\Console\Command\GenerateCommand::class,
+                \App\Console\MailCheckCommand::class
             ],
             'fixture_paths' => [
                 __DIR__ . '/../../src/Auth/Fixture',

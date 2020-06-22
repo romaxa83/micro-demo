@@ -12,16 +12,10 @@ class UserRepository
     private EntityManagerInterface $em;
     private EntityRepository $repository;
 
-    /**
-     * UserRepository constructor.
-     * @param EntityManagerInterface $em
-     */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, EntityRepository $repo)
     {
         $this->em = $em;
-        /** @var EntityRepository $repository */
-        $repository = $em->getRepository(User::class);
-        $this->repository = $repository;
+        $this->repository = $repo;
     }
 
     public function hasByEmail(Email $email): bool

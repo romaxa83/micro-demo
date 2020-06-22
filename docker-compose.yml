@@ -7,9 +7,11 @@ services:
     ports:
       - "8080:8080"
       - "8081:8081"
+      - "8082:8082"
     depends_on:
       - frontend
       - api
+      - mailer
 
   frontend:
     build:
@@ -63,6 +65,12 @@ services:
       DB_USER: cubic
       DB_PASSWORD: password
       DB_NAME: micro
+      MAILER_HOST: mailer
+      MAILER_PORT: 1025
+      MAILER_USER: app
+      MAILER_PASSWORD: secret
+      MAILER_ENCRYPTION: tcp
+      MAILER_FROM_EMAIL: mail@app.com
 
   api-php-cli:
     build:
@@ -81,6 +89,12 @@ services:
       DB_USER: cubic
       DB_PASSWORD: password
       DB_NAME: micro
+      MAILER_HOST: mailer
+      MAILER_PORT: 1025
+      MAILER_USER: app
+      MAILER_PASSWORD: secret
+      MAILER_ENCRYPTION: tcp
+      MAILER_FROM_EMAIL: mail@app.com
 
   api-postgres:
     image: postgres:12.2-alpine
@@ -92,6 +106,9 @@ services:
       - api-postgres:/var/lib/postgresql/data
     ports:
       - "54321:5432"
+
+  mailer:
+    image: mailhog/mailhog
 
 volumes:
   api-postgres:
