@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-//use Finesse\SwiftMailerDefaultsPlugin\SwiftMailerDefaultsPlugin;
+use Finesse\SwiftMailerDefaultsPlugin\SwiftMailerDefaultsPlugin;
 use Psr\Container\ContainerInterface;
 
 return [
@@ -17,9 +17,9 @@ return [
 
         $mailer = new Swift_Mailer($transport);
 
-//        $mailer->registerPlugin(new SwiftMailerDefaultsPlugin([
-//            'from' => $config['from'],
-//        ]));
+        $mailer->registerPlugin(new SwiftMailerDefaultsPlugin([
+            'from' => $config['from'],
+        ]));
 
         return $mailer;
     },
@@ -31,7 +31,7 @@ return [
             'user' => getenv('MAILER_USER'),
             'password' => getenv('MAILER_PASSWORD'),
             'encryption' => getenv('MAILER_ENCRYPTION'),
-            'from' => [getenv('MAILER_FROM_EMAIL') => 'Micro'],
+            'from' => [getenv('MAILER_FROM_EMAIL') => 'Micro F'],
         ],
     ],
 ];

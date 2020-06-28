@@ -14,7 +14,7 @@
         <testsuite name="unit">
             <!-- suffix - указывает как должны заканчивать файлы с тестами-->
             <directory suffix="Test.php">src/Auth/Test/Unit</directory>
-            <directory suffix="Test.php">tests/Unit</directory>
+            <directory suffix="Test.php">src/Frontend/Test/Unit</directory>
         </testsuite>
         <testsuite name="functional">
             <!-- suffix - указывает как должны заканчивать файлы с тестами-->
@@ -25,6 +25,10 @@
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src</directory>
+            <exclude>
+                <directory>src/Auth/Test</directory>
+                <directory>src/Frontend/Test</directory>
+            </exclude>
         </whitelist>
     </filter>
     <!-- Переменные окружения для тестов -->

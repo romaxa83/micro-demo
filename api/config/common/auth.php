@@ -6,6 +6,7 @@ use App\Auth;
 use App\Auth\Entity\User\User;
 use App\Auth\Entity\User\UserRepository;
 use App\Auth\Service\Tokenizer;
+use App\Frontend\FrontendUrlGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Container\ContainerInterface;
@@ -17,12 +18,5 @@ return [
         /** @var EntityRepository $repo */
         $repo = $em->getRepository(User::class);
         return new UserRepository($em, $repo);
-    },
-
-    Auth\Service\SignUpConfirmationSender::class => function (ContainerInterface $container){
-        $mailer = $container->get(Swift_Mailer::class);
-        $mailerConfig = $container->get('config')['mailer'];
-
-        return new Auth\Service\SignUpConfirmationSender($mailer, $mailerConfig['from']);
     }
 ];
