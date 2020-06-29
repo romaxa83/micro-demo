@@ -20,7 +20,8 @@ use Twig\Environment;
  */
 class NewEmailConfirmTokenSenderTest extends TestCase
 {
-    public function testSuccess(): void
+    /** @test */
+    public function success(): void
     {
         $to = new Email('user@app.test');
         $token = new Token(Uuid::uuid4()->toString(), new DateTimeImmutable());
@@ -47,7 +48,8 @@ class NewEmailConfirmTokenSenderTest extends TestCase
         $sender->send($to, $token);
     }
 
-    public function testError(): void
+    /** @test */
+    public function error(): void
     {
         $to = new Email('user@app.test');
         $token = new Token(Uuid::uuid4()->toString(), new DateTimeImmutable());

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\ErrorHandler\LogErrorHandler;
+use App\ErrorHandler\SentryDecorator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -27,8 +29,17 @@ return [
             $callableResolver,
             $responseFactory,
             $config['display_details'],
-            getenv('APP_ENV') != 'test',
+            $config['log'],
             true
+        );
+
+        /** @var LoggerInterface $logger */
+        $logger = $container->get(LoggerInterface::class);
+
+        $middleware->setDefaultErrorHandler(
+            new SentryDecorator(
+                new LogErrorHandler($callableResolver, $responseFactory, $logger)
+            )
         );
 
         return $middleware;
@@ -37,6 +48,7 @@ return [
     'config' => [
         'errors' => [
             'display_details' => (bool)getenv('APP_DEBUG'),
+            'log' => true
         ],
     ],
 ];

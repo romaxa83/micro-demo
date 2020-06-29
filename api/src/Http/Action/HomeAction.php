@@ -14,6 +14,9 @@ class HomeAction implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+//        throw new \Exception('sdas');
+//        file_put_contents('php://stdout', 'Success');
+//        file_put_contents('php://stderr', 'Error');
         $data = [
             'app' => 'micro-api',
             'version' => '1.0'
