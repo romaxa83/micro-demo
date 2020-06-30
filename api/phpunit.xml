@@ -3,7 +3,6 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.1/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          executionOrder="depends,defects"
-         forceCoversAnnotation="true"
          beStrictAboutCoversAnnotation="true"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
@@ -15,6 +14,7 @@
             <!-- suffix - указывает как должны заканчивать файлы с тестами-->
             <directory suffix="Test.php">src/Auth/Test/Unit</directory>
             <directory suffix="Test.php">src/Frontend/Test/Unit</directory>
+            <directory suffix="Test.php">src/Http/Test/Unit</directory>
         </testsuite>
         <testsuite name="functional">
             <!-- suffix - указывает как должны заканчивать файлы с тестами-->
@@ -28,6 +28,7 @@
             <exclude>
                 <directory>src/Auth/Test</directory>
                 <directory>src/Frontend/Test</directory>
+                <directory>src/Http/Test</directory>
             </exclude>
         </whitelist>
     </filter>

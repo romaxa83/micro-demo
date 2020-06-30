@@ -44,7 +44,6 @@ class Handler
         SignUpConfirmationSender $sender
     )
     {
-
         $this->userRepository = $userRepository;
         $this->hasher = $hasher;
         $this->tokenizer = $tokenizer;

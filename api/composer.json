@@ -31,6 +31,7 @@
         "webmozart/assert": "^1.8"
     },
     "require-dev": {
+        "dms/phpunit-arraysubset-asserts": "^0.2.0",
         "doctrine/data-fixtures": "^1.4",
         "phpunit/phpunit": "^9.1",
         "roave/security-advisories": "dev-master"

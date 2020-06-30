@@ -1,0 +1,15 @@
+###
+
+GET http://localhost:8081
+Accept: application/json
+
+###
+
+GET http://localhost:8081/not-found
+Accept: application/json
+
+###
+
+POST http://localhost:8081/v1/auth/signup
+
+###
