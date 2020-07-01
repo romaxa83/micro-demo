@@ -36,7 +36,6 @@ class RequestAction implements RequestHandlerInterface
             $this->commandHandler->handle($command);
             return new EmptyResponse(201);
         } catch (\DomainException $exception) {
-//            dd($exception->getMessage());
             return new JsonResponse(['message' => $exception->getMessage()], 409);
         }
     }

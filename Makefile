@@ -14,7 +14,7 @@ init: down-clear api-clear frontend-clear \
 up: up_docker info
 check: api-validate-schema test
 rebuild: down build up info
-test: api-test
+test: api-test api-fixtures
 
 up_docker:
 	docker-compose up -d
@@ -111,6 +111,7 @@ test-functional-coverage:
 info:
 	echo "FRONT - http://localhost:8080";
 	echo "API - http://localhost:8081";
+	echo "MAILER - http://localhost:8082";
 
 #/////////////////////////////////////////////////////////
 #========FOR_PRODUCT======================================

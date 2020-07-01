@@ -9,6 +9,16 @@ use Test\Functional\WebTestCase;
 
 class RequestTest extends WebTestCase
 {
+    // запускаеться перед каждым тестом
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->loadFixtures([
+            RequestFixture::class,
+        ]);
+    }
+
     /** @test */
     public function method(): void
     {
@@ -20,21 +30,31 @@ class RequestTest extends WebTestCase
     /** @test */
     public function success(): void
     {
+        $this->mailer()->clear();
+
         $response = $this->app()->handle(self::json('POST', '/v1/auth/signup', [
             'email' => 'new-user@app.test',
             'password' => 'password'
         ]));
-//        dd($response);
 
         self::assertEquals(201, $response->getStatusCode());
         self::assertEquals('', (string)$response->getBody());
+
+        // проверяем отправку писем
+        // @see https://github.com/mailhog/MailHog/blob/master/docs/APIv2/swagger-2.0.yaml
+//        $json = file_get_contents('http://mailer:8025/api/v2/search?query=new-user@app.test&kind=to');
+//        $data = Json::decode($json);
+//
+//        self::assertGreaterThan(0, $data['total']);
+
+        self::assertTrue($this->mailer()->hasEmailSentTo('new-user@app.test'));
     }
 
     /** @test */
     public function existing(): void
     {
         $response = $this->app()->handle(self::json('POST', '/v1/auth/signup', [
-            'email' => 'user@app.test',
+            'email' => 'existing@app.test',
             'password' => 'password'
         ]));
 
