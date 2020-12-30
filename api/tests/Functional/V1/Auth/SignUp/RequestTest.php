@@ -103,9 +103,9 @@ class RequestTest extends WebTestCase
     /** @test */
     public function not_valid_lang(): void
     {
-        $this->markTestIncomplete('Waiting for translations.');
+//        $this->markTestIncomplete('Waiting for translations.');
 
-        $response = $this->app()->handle(self::json('POST', '/v1/auth/join', [
+        $response = $this->app()->handle(self::json('POST', '/v1/auth/signup', [
             'email' => 'not-email',
             'password' => '',
         ])->withHeader('Accept-Language', 'es;q=0.9, ru;q=0.8, *;q=0.5'));

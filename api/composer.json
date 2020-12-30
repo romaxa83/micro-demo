@@ -20,6 +20,7 @@
         "finesse/swiftmailer-defaults-plugin": "^2.0",
         "guzzlehttp/guzzle": "^6.5",
         "laminas/laminas-config-aggregator": "^1.2",
+        "middlewares/negotiation": "^2.0",
         "monolog/monolog": "^2.1",
         "php-di/php-di": "^6.0",
         "ramsey/uuid": "^4.0",
@@ -27,7 +28,9 @@
         "slim/psr7": "^1.0",
         "slim/slim": "^4.5",
         "swiftmailer/swiftmailer": "^6.2",
+        "symfony/config": "^5.2",
         "symfony/console": "^5.0",
+        "symfony/translation": "^5.2",
         "symfony/validator": "^5.2",
         "twig/twig": "^3.0",
         "webmozart/assert": "^1.8"
