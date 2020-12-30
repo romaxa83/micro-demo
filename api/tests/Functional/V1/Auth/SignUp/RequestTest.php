@@ -70,7 +70,15 @@ class RequestTest extends WebTestCase
     {
         $response = $this->app()->handle(self::json('POST', '/v1/auth/signup', []));
 
-        self::assertEquals(500, $response->getStatusCode());
+        self::assertEquals(422, $response->getStatusCode());
+        self::assertJson($body = (string)$response->getBody());
+
+        self::assertEquals([
+            'errors' => [
+                'email' => 'This value should not be blank.',
+                'password' => 'This value should not be blank.',
+            ],
+        ], Json::decode($body));
     }
 
     /** @test */
@@ -81,6 +89,37 @@ class RequestTest extends WebTestCase
             'password' => ''
         ]));
 
-        self::assertEquals(500, $response->getStatusCode());
+        self::assertEquals(422, $response->getStatusCode());
+        self::assertJson($body = (string)$response->getBody());
+
+        self::assertEquals([
+            'errors' => [
+                'email' => 'This value is not a valid email address.',
+                'password' => 'This value should not be blank.',
+            ],
+        ], Json::decode($body));
+    }
+
+    /** @test */
+    public function not_valid_lang(): void
+    {
+        $this->markTestIncomplete('Waiting for translations.');
+
+        $response = $this->app()->handle(self::json('POST', '/v1/auth/join', [
+            'email' => 'not-email',
+            'password' => '',
+        ])->withHeader('Accept-Language', 'es;q=0.9, ru;q=0.8, *;q=0.5'));
+
+        self::assertEquals(422, $response->getStatusCode());
+        self::assertJson($body = (string)$response->getBody());
+
+        $data = Json::decode($body);
+
+        self::assertEquals([
+            'errors' => [
+                'email' => 'Значение адреса электронной почты недопустимо.',
+                'password' => 'Значение не должно быть пустым.',
+            ],
+        ], $data);
     }
 }

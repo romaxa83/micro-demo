@@ -28,6 +28,7 @@
         "slim/slim": "^4.5",
         "swiftmailer/swiftmailer": "^6.2",
         "symfony/console": "^5.0",
+        "symfony/validator": "^5.2",
         "twig/twig": "^3.0",
         "webmozart/assert": "^1.8"
     },
@@ -35,7 +36,8 @@
         "dms/phpunit-arraysubset-asserts": "^0.2.0",
         "doctrine/data-fixtures": "^1.4",
         "phpunit/phpunit": "^9.1",
-        "roave/security-advisories": "dev-master"
+        "roave/security-advisories": "dev-master",
+        "symfony/var-dumper": "^5.2"
     },
     "autoload": {
         "psr-4": {

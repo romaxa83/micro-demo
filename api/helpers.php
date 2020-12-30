@@ -1,5 +1,5 @@
 <?php
 
-function dd($var){
-    echo '<pre>' . var_dump($var) .'</pre>'; die();
-}
+//function dd($var){
+//    echo '<pre>' . var_dump($var) .'</pre>'; die();
+//}
