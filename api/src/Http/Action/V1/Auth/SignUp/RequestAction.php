@@ -30,7 +30,6 @@ class RequestAction implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-
         $data = $request->getParsedBody();
 
         $command = new Command();
@@ -39,13 +38,8 @@ class RequestAction implements RequestHandlerInterface
 
         $this->validator->validate($command);
 
-        try {
-            $this->commandHandler->handle($command);
+        $this->commandHandler->handle($command);
 
-            return new EmptyResponse(201);
-        } catch (\DomainException $exception) {
-
-            return new JsonResponse(['message' => $exception->getMessage()], 409);
-        }
+        return new EmptyResponse(201);
     }
 }
